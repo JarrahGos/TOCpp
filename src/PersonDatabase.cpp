@@ -7,6 +7,8 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 class PersonDatabase
 {
@@ -257,9 +259,6 @@ bool PersonDatabase::testBarCode(Person* left, Person* right, bool lessEq)
 		return (left->getBarCode() > right->getBarCode());
 	}
 }
-//write out database goes here
-// as does admin write out database
-// and read database
 PersonDatabase::sortBy(int sort) {
 	switch(sort) {
 		case 1:
@@ -274,6 +273,92 @@ PersonDatabase::sortBy(int sort) {
 		default:
 			PersonDatabase::quickSort(0, logicalSize-1, testName);
 	}
+}
+int PersonDatabase::writeOutDatabase(std::string path) 
+{
+	PersonDatabase::sortBy(1);
+	std::ofstream outfile (path);
+	if(outfile.is_open()) {
+		outfile << "PersonDatabase File" << '\n';
+		outfile << "---------------------------------------------" << '\n';
+		outfile << "7000000" << '\n';
+		outfile << admin.getName() << '\n';
+		for(int i = 0; i < logicalSize; i++) {
+			outfile << "---------------------------------------------" << '\n';
+			outfile << allPersons[i].getBarCode() << '\n';
+			outfile << allPersons[i].getName() << '\n';
+			outfile << allPersons[i].totalCostRunning() << '\n';
+			outfile << allPersons[i].totalCostWeek() << '\n';
+			outfile << allPersons[i].canBuy() << '\n';
+		}
+		sortBy(3);
+		outfile.close();
+		return 0;
+	}
+	return 1;
+}
+int PersonDatabase::adminWriteOutDatabase(std::string path) 
+{
+	int total = 0;
+	PersonDatabase::sortBy(1);
+	std::ofstream outfile (path);
+	if(outfile.is_open()) {
+		for(int i = 0; i < logicalSize; i++) {
+			outfile << "---------------------------------------------" << '\n';
+			outfile << "Bar Code:	" + allPersons[i].getBarCode() << '\n';
+			outfile << "Name:	" + allPersons[i].getName() << '\n';
+			outfile << "Total:	$" + allPersons[i].totalCostRunning() << '\n';
+			outfile << "Bill:	$" + allPersons[i].totalCostWeek() << '\n';
+			total += allPersons[i].totalCostWeek();
+		}
+		outfile << "---------------------------------------------" << '\n';
+		outfile << "The total for this bill is: " + total; << '\n';
+		sortBy(3);
+		outfile.close();
+		return 0;
+	}
+	return 1;
+}
+int PersonDatabase::readDatabase(std::string path)
+{
+	std::string tempName, tempInput;
+	long tempTotalCostRunning, tempTotalCostWeek;
+	double doubleCosts;
+	int tempBarCode;
+	int count = 0;
+	bool tempCanBuy;
+	int z;
+	std::string::size_type sz;
+	std::ifstream inFile (path);
+	if(inFile.is_open()) {
+		std::getline(inFile, tempInput);
+		std::getline(inFile, tempInput);
+		std::getline(inFile, tempInput);
+		tempBarCode =  std::stol(tempInput, sz);
+		std::getline(inFile, tempName);
+		admin = new Person(tempName, tempBarCode, 0,0, true);
+		for(z = 0; inFile.good(); z++) {
+			std::getline(inFile, tempInput);
+			tempBarCode =  std::stol(tempInput, sz);
+			std::getline(inFile, tempName);
+			std::getline(inFile, tempInput);
+			doubleCosts =  std::stod(tempInput, sz);
+			tempTotalCostRunning = (long)(doubleCosts*100);
+			std::getline(inFile, tempInput);
+			doubleCosts =  std::stod(tempInput, sz);
+			tempTotalCostWeek = (long)(doubleCosts*100);
+			std::getline(inFile, tempInput);
+			if(tempInput == '0' || tempInput == "true" || tempInput == "True" || tempInput == "TRUE") {
+				tempCanBuy = true;
+			}
+			else tempCanBuy = false;
+			count += PersonDatabase::setDatabasePerson(z, tempName, tempTotalCostRunning, tempTotalCostWeek, tempBarCode, tempCanBuy);
+		}
+	}
+	else return -1;
+	inFile.close();
+	PersonDatabase::sortBy(3);
+	return z-count;
 }
 int PersonDatabase::findPerson(long barCode) 
 {
