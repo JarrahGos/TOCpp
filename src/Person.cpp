@@ -10,20 +10,20 @@
 class Person {
 private:
 	std::string name;
-	long totalCostRunning, totalCostWeek, barCode;
-	bool canBuy;
+	long costRunning, costWeek, barCode;
+	bool userCanBuy;
 public: 
 	Person(std::string, long, long, long, bool);
-	addPrice(long);
+	void addPrice(long);
 	bool canBuy();
 	long getBarCode();
 	std::string getData();
 	std::string getDataUser();
 	std::string getName();
-	resetWeekCost();
-	setCanBuy(bool);
-	setData(std::string, int, bool);
-	setName(std::string);
+	void resetWeekCost();
+	void setCanBuy(bool);
+	void setData(std::string, long, bool);
+	void setName(std::string);
 	double totalCostRunning();
 	double totalCostWeek();
 };
@@ -31,15 +31,15 @@ Person::Person(std::string extName, long extBarCode, long running, long week, bo
 {
 	Person::name = extName; 
 	Person::barCode = extBarCode;
-	Person::totalCostRunning = running;
-	Person::totalCostWeek = week;
-	Person::canBuy = extCanBuy;
+	costRunning = running;
+	costWeek = week;
+	userCanBuy = extCanBuy;
 }
-Person::setData(std::string name, long extbarCode, bool extCanBuy)
+void Person::setData(std::string name, long extbarCode, bool extCanBuy)
 {
 	Person::name = name;
 	Person::barCode = extbarCode;
-	Person::canBuy = extCanBuy;
+	Person::userCanBuy = extCanBuy;
 }
 std::string Person::getData()
 {
@@ -52,9 +52,9 @@ std::string Person::getData()
 	output += "\n	Name: ";
 	output += name;
 	output += "\n	Running Cost: $";
-	output += (double)(totalCostRunning/100);
+	output += (double)(costRunning/100);
 	output += "\n	Bill Cost: $";
-	output += (double)totalCostWeek/100;
+	output += (double)costWeek/100;
 	return output;
 }
 std::string Person::getDataUser() // html may not be needed for C++
@@ -68,9 +68,9 @@ std::string Person::getDataUser() // html may not be needed for C++
 	// add handler in here if html needed
 	output += name;
 	output += "\n	Running Cost: $";
-	output += (double)totalCostRunning/100;
+	output += (double)costRunning/100;
 	output += "\n	Current Bill total: $"; 
-	output += (double)totalCostWeek/100;
+	output += (double)costWeek/100;
 	return output;
 }
 std::string Person::getName()
@@ -88,7 +88,7 @@ double Person::totalCostRunning()
 	Precondition: setData has been run for the invoking person
 	Postcondition: this method will return the price of the invoking person as a decimal double
 	*/
-	return (double)totalCostRunning/100;
+	return (double)costRunning/100;
 }
 double Person::totalCostWeek()
 {
@@ -97,22 +97,22 @@ double Person::totalCostWeek()
 	Precondition: setData has been run for the invoking person
 	Postcondition: this method will return the price of the invoking person as a decimal double.
 	*/
-	return (double)totalCostWeek/100;
+	return (double)costWeek/100;
 }
-Person::addPrice(long cost)
+void Person::addPrice(long cost)
 {
-	Person::totalCostRunning += cost;
-	Person::totalCostWeek += cost;
+	Person::costRunning += cost;
+	Person::costWeek += cost;
 }
-Person::setName(std::string extName)
+void Person::setName(std::string extName)
 {
 	Person::name = extName;
 }
 bool Person::canBuy()
 {
-	return Person::canBuy;
+	return Person::userCanBuy;
 }
-Person::setCanBuy(bool extCanBuy)
+void Person::setCanBuy(bool extCanBuy)
 {
-	Person::canBuy = extCanBuy;
+	Person::userCanBuy = extCanBuy;
 }

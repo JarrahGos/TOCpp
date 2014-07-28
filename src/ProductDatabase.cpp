@@ -34,17 +34,17 @@ public:
 	bool testName(Product*, Product*);
 	bool testBarCode(Product*, Product*);
 	bool testPrice(Product*, Product*);
-	quickSort(int, int, int);
+	void quickSort(int, int, int);
 	bool productExists(std::string, long);
 	bool productExists(long);
 	int readDatabase(std::string);
-	resetBills();
-	resizeDatabase(bool);
+	void resetBills();
+	void resizeDatabase(bool);
 	Product* resizeDatabase(bool, Product*);
-	setDatabaseProduct(int, std::string, long, long, long, bool);
+	void setDatabaseProduct(int, std::string, long, long, long, bool);
 	setNumber(int, int);
-	sortBy(int);
-	writeOutDatabase(std::string);
+	void sortBy(int);
+	void writeOutDatabase(std::string);
 };
 ProductDatabase::ProductDatabase()
 {
@@ -52,7 +52,7 @@ ProductDatabase::ProductDatabase()
 	logicalSize = 0;
 	allProductsSize = 47;
 }
-ProductDatabase::setDatabaseProduct(int productNo, std::string name, long running, long week, long barCode, bool canBuy)
+void ProductDatabasesetDatabaseProduct(int productNo, std::string name, long running, long week, long barCode, bool canBuy)
 {
 	int test = 1;
 	if(!productExists(name, barCode)) {
@@ -157,9 +157,9 @@ bool ProductDatabase::productExists(long extBarCode)
 	}
 	return false;
 }
-ProductDatabase::resizeDatabase(bool action) 
+void ProductDatabaseresizeDatabase(bool action) 
 {
-	allProducts = resizeDatabase(action, &allProducts);
+	ProductDatabase::allProducts = resizeDatabase(action, &allProducts);
 }
 Product* ProductDatabase::resizeDatabase(bool action, std::vector<Product> resizing) 
 {
@@ -203,7 +203,7 @@ int ProductDatabase::partition(int lb, int ub, bool(*test)(Product*))
 	allProducts[right] = pivotElement;
 	return right;
 }
-ProductDatabase::quickSort(int left, int right, bool(*test)(Product*))
+void ProductDatabasequickSort(int left, int right, bool(*test)(Product*))
 {
 	if(left < right) {
 		int pivot = partition(left, right, test);
@@ -238,7 +238,7 @@ bool ProductDatabase::testBarCode(Product* left, Product* right, bool lessEq)
 		return (left->getBarCode() > right->getBarCode());
 	}
 }
-ProductDatabase::sortBy(int sort) {
+void ProductDatabasesortBy(int sort) {
 	switch(sort) {
 		case 1:
 			ProductDatabase::quickSort(0, logicalSize-1, testName);
