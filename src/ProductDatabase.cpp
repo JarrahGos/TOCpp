@@ -157,7 +157,7 @@ bool ProductDatabase::productExists(long extBarCode)
 	}
 	return false;
 }
-void ProductDatabaseresizeDatabase(bool action) 
+void ProductDatabase::resizeDatabase(bool action) 
 {
 	ProductDatabase::allProducts = resizeDatabase(action, &allProducts);
 }
@@ -167,7 +167,7 @@ Product* ProductDatabase::resizeDatabase(bool action, std::vector<Product> resiz
 		allProductsSize += 4;
 		return resizing.resize(allProductsSize);
 	}
-	else if(allProducts > 4) {
+	else if(allProductsSize/2 > 4) {
 		allProductsSize /=4;
 		return resizing.resize(allProductsSize);
 	}
@@ -203,7 +203,7 @@ int ProductDatabase::partition(int lb, int ub, bool(*test)(Product*))
 	allProducts[right] = pivotElement;
 	return right;
 }
-void ProductDatabasequickSort(int left, int right, bool(*test)(Product*))
+void ProductDatabase::quickSort(int left, int right, bool(*test)(Product*))
 {
 	if(left < right) {
 		int pivot = partition(left, right, test);
@@ -238,7 +238,7 @@ bool ProductDatabase::testBarCode(Product* left, Product* right, bool lessEq)
 		return (left->getBarCode() > right->getBarCode());
 	}
 }
-void ProductDatabasesortBy(int sort) {
+void ProductDatabase::sortBy(int sort) {
 	switch(sort) {
 		case 1:
 			ProductDatabase::quickSort(0, logicalSize-1, testName);

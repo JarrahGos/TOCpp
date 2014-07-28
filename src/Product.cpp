@@ -24,6 +24,7 @@ public:
 	std::string getName();
 	int getNumber();
 	int getQuantity();
+	void minusNumber(int);
 	long productPrice();
 	setData(std::string, long, long);
 	setName(std::string);
@@ -142,6 +143,10 @@ Product::setName(std::string extName)
 Product::decrementNmuber()
 {
 	numberOfItems--;
+}
+Product::minusNumber(int sub)
+{
+	numberOfItems -= sub;
 }
 Product::setQuantity(int quantity)
 {
