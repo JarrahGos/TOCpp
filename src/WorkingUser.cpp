@@ -8,14 +8,18 @@
 #include <openssl/sha.h>
 #include <cstring>
 #include <exception>
+#include "PersonDatabase.cpp"
+#incldue "ProductDatabase.cpp"
+#include "CheckOut.cpp"
 class WorkingUser {
 private:
 	//CheckOut checkOuts;
 	PersonDatabase personDatabase;
 	ProductDatabase productDatabase;
-	int userNumber;
+	CheckOut checkOuts;
+	int currentUserNumber;
 public:
-	WorkingUSer();
+	WorkingUser();
 	void addDatabases();
 	void addPersonToDatabase(std::string, long);
 	void addProductToDatabase(std::string, long, long);
@@ -50,10 +54,10 @@ public:
 };
 WorkingUser::WorkingUser()
 {
-	WorkingUser::productDatabase = new ProductDatabase();
+	WorkingUser::productDatabase = new ProductDatabase::ProductDatabase();
 	WorkingUser::personDatabase = new PersonDatabase();
-	//WorkingUser::checkOuts = new CheckOut();
-	WorkingUser::userNumber = -1;
+	WorkingUser::checkOuts = new CheckOut();
+	WorkingUser::currentUserNumber = -1;
 }
 void WorkingUser::addDatabases()
 {
@@ -83,11 +87,11 @@ void WorkingUser::getPMKeyS(std::string input)
 		input = input.substr(1, input.length(), std::string::size_type);
 	}
 	if(broken || !WorkingUser::isLong(input) || !personDatabase.personExists(std::stol(input, std::string::size_type))) {
-		userNumber = -1;
+		currentUserNumber = -1;
 	} 
 	else {
 		correct = true;
-		userNumber = personDatabase.findPerson(stol(input, std::string::size_type));
+		currentUserNumber = personDatabase.findPerson(stol(input, std::string::size_type));
 	}
 }
 std::string* WorkingUser::getUserNames() 
@@ -152,37 +156,37 @@ bool WorkingUser::isDouble(std::string s)
 // scrollPane printDatabase goes here
 void WorkingUser::logOut()
 {
-	userNumber = -1;
+	currentUserNumber = -1;
 	//checkOuts = new CheckOut();
 }
 void WorkingUser::buyProducts()
 {
-//	WorkingUser::personDatabase.addCost(WorkingUser::userNumber, checkOuts.getPrice());
-//	WorkingUser::checkOuts.productBought();
+	WorkingUser::personDatabase.addCost(WorkingUser::currentUserNumber, checkOuts.getPrice());
+	WorkingUser::checkOuts.productBought();
 	WorkingUser::productDatabase.writeOutDatabase("productDatabase.txt");
 	WorkingUser::personDatabase.writeOutDatabase("personDatabase.txt");
 	WorkingUser::logOut();
 }
 std::string WorkingUser::getCheckOut()
 {
-	//return checkOuts.getCheckOut(1);
+	return checkOuts.getCheckOut(1);
 }
 std::string* WorkingUser::getCheckOutNames()
 {
-	//return checkOuts.getCheckOutNames();
+	return checkOuts.getCheckOutNames();
 }
 std::string* WorkingUser::getCheckOutPrices()
 {
-	//return checkOuts.getCheckOutPrices();
+	return checkOuts.getCheckOutPrices();
 }
 std::string WorkingUser::userName()
 {
-	return userNumber == -1 ? "error" : PersonDatabase.getPersonName(WorkingUser::userNumber);
+	return currentUserNumber == -1 ? "error" : personDatabase.getPersonName(WorkingUser::currentUserNumber);
 }
 // add to cart goes here;
 int WorkingUser::userNumber()
 {
-	return userNumber;
+	return currentUserNumber;
 }
 double WorkingUser::getPrice()
 {
@@ -199,12 +203,11 @@ void WorkingUser::addProductToDatabase(std::string name, long barCode, long pric
 }
 void WorkingUser::adminWriteOutDatabase(std::string type)
 {
-	switch (type) {
-		case "Person": personDatabase.adminWriteOutDatabase("adminPersonDatabase.txt");
-						break;
-		case "Product":productDatabase.adminWriteOutDatabase("adminProductDatabase.xt");
-						break;
-		default:personDatabase.adminWriteOutDatabase("adminPersonDatabase.txt");
+	if(type == "Product") {
+		productDatabase.adminWriteOutDatabase("adminProductDatabase.txt");
+	}
+	else {
+		personDatabase.adminWriteOutDatabase("adminPersonDatabase.txt");
 	}
 }
 void WorkingUser::removePerson(int index)

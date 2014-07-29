@@ -10,11 +10,11 @@
 class Product {
 private:
 	std::string name;
-	long barCode, productPrice;
+	long barCode, productPriceVar;
 	int numberOfItems, quantity;
 public: 
 	Product(std::string, long, long);
-	decrementNmuber();
+	void decrementNmuber();
 	long getBarCode();
 	std::string getData();
 	std::string getDataName();
@@ -26,29 +26,35 @@ public:
 	int getQuantity();
 	void minusNumber(int);
 	long productPrice();
-	setData(std::string, long, long);
-	setName(std::string);
-	setNumber(int);
-	setPrice(long);
-	setQuantity(int);
+	void setData(std::string, long, long);
+	void setName(std::string);
+	void setNumber(int);
+	void setPrice(long);
+	void setQuantity(int);
 };
+Product::Product()
+{
+	name = "name";
+	barCode = 0;
+	productPriceVar = 0;
+}
 Product::Product(std::string extName, long extProductPrice, long extBarCode)
 {
 	Product::name = extName; 
 	Product::barCode = extBarCode;
-	Product::productPrice = productPrice;
+	Product::productPriceVar = extProductPrice;
 }
-Product::setData(std::string name, long extProductPrice, long extbarCode)
+void Product::setData(std::string name, long extProductPrice, long extbarCode)
 {
 	Product::name = name;
 	Product::barCode = extbarCode;
-	Product::productPrice = extProductPrice;
+	Product::productPriceVar = extProductPrice;
 }
-Product::setNumber(int number)
+void Product::setNumber(int number)
 {
 	Product::numberOfItems = number;
 }
-Product::getNumber()
+int Product::getNumber()
 {
 	return Product::numberOfItems;
 }
@@ -63,7 +69,7 @@ std::string Product::getData()
 	output += "\n	Name: ";
 	output += name;
 	output += "\n	Running Cost: $";
-	output += (double)(productPrice/100);
+	output += (double)(productPriceVar/100);
 	output += "\n	Quantity: ";
 	output += numberOfItems;
 	return output;
@@ -76,7 +82,7 @@ std::string Product::getDataScreen()
 	output += " x ";
 	output += quantity;
 	output += "\n	Price: $";
-	output += (double)((productPrice/100)*quantity);
+	output += (double)((productPriceVar/100)*quantity);
 	return output;
 }
 std::string Product::getDataUser() // html may not be needed for C++
@@ -88,13 +94,12 @@ std::string Product::getDataUser() // html may not be needed for C++
 	*/
 	std::string output = "";
 	// add handler in here if html needed
-	std::string output = "";
 	output += "\n	Product Name: ";
 	output += name;
 	output += " x ";
 	output += quantity;
 	output += "\n	Price: $";
-	output += (double)((productPrice/100)*quantity);
+	output += (double)((productPriceVar/100)*quantity);
 	output += "\n";
 	return output;
 }
@@ -111,7 +116,7 @@ std::string Product::getDataPrice()
 {
 	std::string output = "";
 	output += "\n	Price: $";
-	output += (double)((productPrice/100)*quantity);
+	output += (double)((productPriceVar/100)*quantity);
 	output += "\n";
 	return output;
 }
@@ -130,29 +135,29 @@ long Product::productPrice()
 	Precondition: setData has been run for the invoking person
 	Postcondition: this method will return the price of the invoking person as a decimal double
 	*/
-	return Product::productPrice;
+	return Product::productPriceVar;
 }
-Product::setPrice(long cost)
+void Product::setPrice(long cost)
 {
-	Product::productPrice = cost;
+	Product::productPriceVar = cost;
 }
-Product::setName(std::string extName)
+void Product::setName(std::string extName)
 {
 	Product::name = extName;
 }
-Product::decrementNmuber()
+void Product::decrementNmuber()
 {
 	numberOfItems--;
 }
-Product::minusNumber(int sub)
+void Product::minusNumber(int sub)
 {
 	numberOfItems -= sub;
 }
-Product::setQuantity(int quantity)
+void Product::setQuantity(int quantity)
 {
 	Product::quantity = quantity;
 }
-Product::getQuantity()
+int Product::getQuantity()
 {
 	return quantity;
 }

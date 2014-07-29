@@ -27,6 +27,14 @@ public:
 	double totalCostRunning();
 	double totalCostWeek();
 };
+Person::Person()
+{
+	Person::name = "name"; 
+	Person::barCode = 0;
+	costRunning = 0;
+	costWeek = 0;
+	userCanBuy = false;
+}
 Person::Person(std::string extName, long extBarCode, long running, long week, bool extCanBuy)
 {
 	Person::name = extName; 

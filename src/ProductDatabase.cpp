@@ -6,12 +6,14 @@
  */
 
 #include <string>
+#include <vector>
+#include "Product.cpp"
 
 class ProductDatabase
 {
 private:
-	Product *admin = new Product;
-	std::vector<Product> allProducts(80);
+	Product admin;
+	std::vector<Product> allProducts;
 	int logicalSize;
 	int allProductsSize;
 public:
@@ -30,21 +32,21 @@ public:
 	double getProductPrice(int);
 	Product* getProductRef(int);
 	std::string* getUserNames();
-	int partition(int, int, bool (*test)(Product*));
-	bool testName(Product*, Product*);
-	bool testBarCode(Product*, Product*);
-	bool testPrice(Product*, Product*);
-	void quickSort(int, int, int);
+	int partition(int, int, bool(ProductDatabase::*)(Product*, Product*, bool));
+	bool testName(Product*, Product*, bool);
+	bool testBarCode(Product*, Product*, bool);
+	bool testPrice(Product*, Product*, bool);
+	void quickSort(int, int, bool(ProductDatabase::*)(Product*, Product*, bool));
 	bool productExists(std::string, long);
 	bool productExists(long);
 	int readDatabase(std::string);
 	void resetBills();
 	void resizeDatabase(bool);
-	Product* resizeDatabase(bool, Product*);
-	void setDatabaseProduct(int, std::string, long, long, long, bool);
-	setNumber(int, int);
+	std::vector<Product> resizeDatabase(bool, std::vector<Product>);
+	int setDatabaseProduct(int, std::string, long, long);
+	void setNumber(int, int);
 	void sortBy(int);
-	void writeOutDatabase(std::string);
+	int writeOutDatabase(std::string);
 };
 ProductDatabase::ProductDatabase()
 {
@@ -52,11 +54,11 @@ ProductDatabase::ProductDatabase()
 	logicalSize = 0;
 	allProductsSize = 47;
 }
-void ProductDatabasesetDatabaseProduct(int productNo, std::string name, long running, long week, long barCode, bool canBuy)
+int ProductDatabase::setDatabaseProduct(int productNo, std::string name, long price, long barCode)
 {
 	int test = 1;
 	if(!productExists(name, barCode)) {
-		allProducts[logicalSize] = new Product(name, barCode, running, week, canBuy);
+		allProducts[logicalSize] = new Product(name, price, barCode);
 		logicalSize++;
 		test = 0;
 		ProductDatabase::writeOutDatabase("productDatabase.txt");
@@ -84,7 +86,7 @@ std::string ProductDatabase::getDatabase(int sort)
 std::string ProductDatabase::getProduct(int productNo)
 {
 	if(productNo < logicalSize) {
-		return allProducts[productNo]->getData();
+		return allProducts[productNo].getData();
 	}
 	else return "That product does not exist";
 }
@@ -110,10 +112,10 @@ int ProductDatabase::delProduct(int productNo)
 std::string ProductDatabase::getProductName(int productNo) 
 {
 	if(productNo == -2) {
-		return admin->getName();
+		return admin.getName();
 	}
 	else if(productNo < logicalSize) {
-		return allProducts[productNo]->getName();
+		return allProducts[productNo].getName();
 	}
 	else return "error";
 }
@@ -128,7 +130,7 @@ std::string* ProductDatabase::getUserNames() {
 long ProductDatabase::getBarCode(int productNo) 
 {
 	if(productNo < logicalSize){
-		return allProducts[productNo]->getBarCode();
+		return allProducts[productNo].getBarCode();
 	}
 	else return 0;
 }
@@ -139,7 +141,7 @@ int ProductDatabase::emptyProduct()
 bool ProductDatabase::productExists(std::string extProductName, long extBarCode) 
 {
 	for(int i = 0; i < logicalSize; i++){
-		if(allProducts[i] != '\0' && allProducts[i]->getName() == extProductName && allProducts[i]->getBarCode == extBarCode) {
+		if(allProducts[i] != '\0' && allProducts[i].getName() == extProductName && allProducts[i].getBarCode == extBarCode) {
 			return true;
 		}
 	}
@@ -151,7 +153,7 @@ bool ProductDatabase::productExists(long extBarCode)
 		return true;
 	}
 	for(int i =0; i  < logicalSize; i++) {
-		if(allProducts[i] != '\0' && allProducts[i]->getBarCode() == extBarCode && allProducts[i]->canBuy()) {
+		if(allProducts[i] != '\0' && allProducts[i].getBarCode() == extBarCode && allProducts[i].canBuy()) {
 			return true;
 		}
 	}
@@ -159,9 +161,9 @@ bool ProductDatabase::productExists(long extBarCode)
 }
 void ProductDatabase::resizeDatabase(bool action) 
 {
-	ProductDatabase::allProducts = resizeDatabase(action, &allProducts);
+	ProductDatabase::allProducts = resizeDatabase(action, allProducts);
 }
-Product* ProductDatabase::resizeDatabase(bool action, std::vector<Product> resizing) 
+std::vector<Product> ProductDatabase::resizeDatabase(bool action, std::vector<Product> resizing) 
 {
 	if(action) {
 		allProductsSize += 4;
@@ -176,19 +178,19 @@ Product* ProductDatabase::resizeDatabase(bool action, std::vector<Product> resiz
 		resizing.resize(allProductsSize);
 	}
 }
-int ProductDatabase::partition(int lb, int ub, bool(*test)(Product*))
+int ProductDatabase::partition(int lb, int ub, bool(ProductDatabase::*)(Product*, Product*, bool))
 {
 	Product pivotElement = allProducts[lb];
-	Product max = allProducts[logicalSize];
+	int max = logicalSize;
 	int left = lb;
 	int right = ub;
 	Product temp;
 	
 	while(left < right ){
-		while(test(&allProducts[left], &pivotElement) && left + 1 < max) {
+		while(test(allProducts[left], pivotElement) && left + 1 < max) {
 			left++;
 		}
-		while(test(&allProducts[right], &pivotElement) && right-1 > 0) {
+		while(test(allProducts[right], pivotElement) && right-1 > 0) {
 			right--;
 		}
 		if(left < right) {
@@ -203,7 +205,7 @@ int ProductDatabase::partition(int lb, int ub, bool(*test)(Product*))
 	allProducts[right] = pivotElement;
 	return right;
 }
-void ProductDatabase::quickSort(int left, int right, bool(*test)(Product*))
+void ProductDatabase::quickSort(int left, int right, bool(ProductDatabase::*)(Product*, Product*, bool))
 {
 	if(left < right) {
 		int pivot = partition(left, right, test);
@@ -214,7 +216,7 @@ void ProductDatabase::quickSort(int left, int right, bool(*test)(Product*))
 bool ProductDatabase::testName(Product* left, Product* right, bool lessEq)
 {
 	if(lessEq) {
-		return (left->getName() <= right->getName);
+		return (left->getName() <= right->getName());
 	}
 	else {
 		return (left->getName() > right->getName());
@@ -232,7 +234,7 @@ bool ProductDatabase::testPrice(Product* left, Product* right, bool lessEq)
 bool ProductDatabase::testBarCode(Product* left, Product* right, bool lessEq)
 {
 	if(lessEq) {
-		return (left->getBarCode() <= right->getBarCode);
+		return (left->getBarCode() <= right->getBarCode());
 	}
 	else {
 		return (left->getBarCode() > right->getBarCode());
@@ -241,16 +243,16 @@ bool ProductDatabase::testBarCode(Product* left, Product* right, bool lessEq)
 void ProductDatabase::sortBy(int sort) {
 	switch(sort) {
 		case 1:
-			ProductDatabase::quickSort(0, logicalSize-1, testName);
+			ProductDatabase::quickSort(0, logicalSize-1, &ProductDatabase::testName);
 			break;
 		case 2:
-			ProductDatabase::quickSort(0, logicalSize-1, testPrice);
+			ProductDatabase::quickSort(0, logicalSize-1, &ProductDatabase::testPrice);
 			break;
 		case 3:
-			ProductDatabase::quickSort(0, logicalSize-1, testBarCode);
+			ProductDatabase::quickSort(0, logicalSize-1, &ProductDatabase::testBarCode);
 			break;
 		default:
-			ProductDatabase::quickSort(0, logicalSize-1, testName);
+			ProductDatabase::quickSort(0, logicalSize-1, &ProductDatabase::testName);
 	}
 }
 int ProductDatabase::writeOutDatabase(std::string path) 
@@ -313,17 +315,17 @@ int ProductDatabase::readDatabase(std::string path)
 		for(z = 0; inFile.good(); z++) {
 			std::getline(inFile, tempName);
 			std::getline(inFile, tempInput);
-			doubleCosts =  std::stod(tempInput, sz);
+			doubleCosts =  std::stod(tempInput);
 			tempPrice = (long)(doubleCosts*100);
 			std::getline(inFile, tempInput);
-			tempBarCode =  std::stol(tempInput, sz);
+			tempBarCode =  std::stol(tempInput);
 			
 			std::getline(inFile, tempInput);
 			if('-' == tempInput.at(0)) {
-				tempInput = tempInput.substr(1,tempInput.length(), sz);
+				tempInput = tempInput.substr(1,tempInput.length());
 				negative = true;
 			}
-			tempNumberOfProduct =  std::stoi(tempInput, sz);
+			tempNumberOfProduct =  std::stoi(tempInput);
 			if(negative) {
 				tempNumberOfProduct *= -1;
 			}

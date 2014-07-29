@@ -9,17 +9,18 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include "Person.cpp"
 
 class PersonDatabase
 {
 private:
-	Person *admin = new Person;
-	std::vector<Person> allPersons(47);
+	Person admin;
+	std::vector<Person> allPersons;
 	int logicalSize;
 	int allPersonsSize;
 public:
 	PersonDatabase();
-	addCost(int, long);
+	void addCost(int, long);
 	int adminWriteOutDatabase(std::string);
 	int binarySearch(long);
 	int delPerson(int);
@@ -33,23 +34,23 @@ public:
 	double getPersonPriceYear(int);
 	std::string getPersonUser(int);
 	std::string* getUserNames();
-	int partition(Person*, Person*, bool (*test)(Person*));
+	int partition(Person*, Person*, bool(PersonDatabase::*)(Person*, Person*, bool));
 	bool testName(Person*, Person*, bool);
 	bool testPrice(Person*, Person*, bool);
 	bool testBarCode(Person*, Person*, bool);
-	quickSort(int, int, bool (*test)(Person*));
+	void quickSort(int, int, bool(PersonDatabase::*)(Person*, Person*, bool));
 	bool personCanBuy(int);
 	bool personExists(std::string, long);
 	bool personExists(long);
 	int readDatabase(std::string);
-	resetBills();
-	resizeDatabase(bool);
-	Person* resizeDatabase(bool, std::vector<Person>);
-	setAdminPassword(std::string);
-	setDatabasePerson(int, std::string, long, long, long, bool);
-	setPersonCanBuy(int, bool);
-	sortBy(int);
-	writeOutDatabase(std::string);
+	void resetBills();
+	void resizeDatabase(bool);
+	std::vector<Person> resizeDatabase(bool, std::vector<Person>);
+	void setAdminPassword(std::string);
+	int setDatabasePerson(int, std::string, long, long, long, bool);
+	void setPersonCanBuy(int, bool);
+	void sortBy(int);
+	int writeOutDatabase(std::string);
 };
 PersonDatabase::PersonDatabase()
 {
@@ -57,7 +58,7 @@ PersonDatabase::PersonDatabase()
 	logicalSize = 0;
 	allPersonsSize = 47;
 }
-PersonDatabase::setDatabasePerson(int personNo, std::string name, long running, long week, long barCode, bool canBuy)
+int PersonDatabase::setDatabasePerson(int personNo, std::string name, long running, long week, long barCode, bool canBuy)
 {
 	int test = 1;
 	if(!personExists(name, barCode)) {
@@ -80,7 +81,7 @@ std::string PersonDatabase::getDatabase(int sort)
 			output += "\nPerson ";
 			output += 1+i;
 			output += ": \n";
-			output += allPersons[i]->getData();
+			output += allPersons[i].getData();
 		}
 	}
 	PersonDatabase::sortBy(3);
@@ -89,15 +90,15 @@ std::string PersonDatabase::getDatabase(int sort)
 std::string PersonDatabase::getPerson(int personNo)
 {
 	if(personNo < logicalSize) {
-		return allPersons[personNo]->getData();
+		return allPersons[personNo].getData();
 	}
 	else return "That person does not exist";
 }
-std::string PersonDatabase::getPersonUser(int personNo, bool html) // html probably won't be used
+std::string PersonDatabase::getPersonUser(int personNo) // html probably won't be used
 {
 	if(personNo == -1 || personNo == -2) return "Admin";
 	else if(personNo < logicalSize) {
-		return allPersons[personNo]->getDataUser(html);
+		return allPersons[personNo].getDataUser();
 	}
 	else return "That person does not exist";
 }
@@ -119,10 +120,10 @@ int PersonDatabase::delPerson(int personNo)
 std::string PersonDatabase::getPersonName(int personNo) 
 {
 	if(personNo == -2) {
-		return admin->getName();
+		return admin.getName();
 	}
 	else if(personNo < logicalSize) {
-		return allPersons[personNo]->getName();
+		return allPersons[personNo].getName();
 	}
 	else return "error";
 }
@@ -136,20 +137,20 @@ std::string* PersonDatabase::getUserNames() {
 }
 double PersonDatabase::getPersonPriceYear(int personNo) {
 	if(personNo < logicalSize) {
-		return allPersons[personNo]->totalCostRunning();
+		return allPersons[personNo].totalCostRunning();
 	}
 	else return 0;
 }
 double PersonDatabase::getPersonPriceWeek(int personNo) {
 	if(personNo < logicalSize) {
-		return allPersons[personNo]->totalCostWeek();
+		return allPersons[personNo].totalCostWeek();
 	}
 	else return 0;
 }
 long PersonDatabase::getBarCode(int personNo) 
 {
 	if(personNo < logicalSize){
-		return allPersons[personNo]->getBarCode();
+		return allPersons[personNo].getBarCode();
 	}
 	else return 0;
 }
@@ -160,7 +161,7 @@ int PersonDatabase::emptyPerson()
 bool PersonDatabase::personExists(std::string extPersonName, long extBarCode) 
 {
 	for(int i = 0; i < logicalSize; i++){
-		if(allPersons[i] != '\0' && allPersons[i]->getName() == extPersonName && allPersons[i]->getBarCode == extBarCode) {
+		if(allPersons[i] != '\0' && allPersons[i].getName() == extPersonName && allPersons[i].getBarCode == extBarCode) {
 			return true;
 		}
 	}
@@ -172,7 +173,7 @@ bool PersonDatabase::personExists(long extBarCode)
 		return true;
 	}
 	for(int i =0; i  < logicalSize; i++) {
-		if(allPersons[i] != '\0' && allPersons[i]->getBarCode() == extBarCode && allPersons[i]->canBuy()) {
+		if(allPersons[i] != '\0' && allPersons[i].getBarCode() == extBarCode && allPersons[i].canBuy()) {
 			return true;
 		}
 	}
@@ -182,13 +183,13 @@ PersonDatabase::resizeDatabase(bool action)
 {
 	allPersons = resizeDatabase(action, &allPersons);
 }
-Person* PersonDatabase::resizeDatabase(bool action, std::vector<Person> resizing) 
+std::vector<Person> PersonDatabase::resizeDatabase(bool action, std::vector<Person> resizing) 
 {
 	if(action) {
 		allPersonsSize += 4;
 		return resizing.resize(allPersonsSize);
 	}
-	else if(allPersons > 4) {
+	else if(allPersonsSize > 4) {
 		allPersonsSize /=4;
 		return resizing.resize(allPersonsSize);
 	}
@@ -197,7 +198,7 @@ Person* PersonDatabase::resizeDatabase(bool action, std::vector<Person> resizing
 		resizing.resize(allPersonsSize);
 	}
 }
-int PersonDatabase::partition(int lb, int ub, bool(*test)(Person*))
+int PersonDatabase::partition(int lb, int ub, bool(PersonDatabase::*)(Person*, Person*, bool))
 {
 	Person pivotElement = allPersons[lb];
 	Person max = allPersons[logicalSize];
@@ -224,7 +225,7 @@ int PersonDatabase::partition(int lb, int ub, bool(*test)(Person*))
 	allPersons[right] = pivotElement;
 	return right;
 }
-PersonDatabase::quickSort(int left, int right, bool(*test)(Person*))
+PersonDatabase::quickSort(int left, int right, bool(PersonDatabase::*)(Person*, Person*, bool))
 {
 	if(left < right) {
 		int pivot = partition(left, right, test);
@@ -235,7 +236,7 @@ PersonDatabase::quickSort(int left, int right, bool(*test)(Person*))
 bool PersonDatabase::testName(Person* left, Person* right, bool lessEq)
 {
 	if(lessEq) {
-		return (left->getName() <= right->getName);
+		return (left->getName() <= right->getName());
 	}
 	else {
 		return (left->getName() > right->getName());
@@ -253,13 +254,13 @@ bool PersonDatabase::testPrice(Person* left, Person* right, bool lessEq)
 bool PersonDatabase::testBarCode(Person* left, Person* right, bool lessEq)
 {
 	if(lessEq) {
-		return (left->getBarCode() <= right->getBarCode);
+		return (left->getBarCode() <= right->getBarCode());
 	}
 	else {
 		return (left->getBarCode() > right->getBarCode());
 	}
 }
-PersonDatabase::sortBy(int sort) {
+void PersonDatabase::sortBy(int sort) {
 	switch(sort) {
 		case 1:
 			PersonDatabase::quickSort(0, logicalSize-1, testName);
@@ -307,12 +308,12 @@ int PersonDatabase::adminWriteOutDatabase(std::string path)
 			outfile << "---------------------------------------------" << '\n';
 			outfile << "Bar Code:	" + allPersons[i].getBarCode() << '\n';
 			outfile << "Name:	" + allPersons[i].getName() << '\n';
-			outfile << "Total:	$" + allPersons[i].totalCostRunning() << '\n';
-			outfile << "Bill:	$" + allPersons[i].totalCostWeek() << '\n';
+			outfile << "Total:	$" + std::to_string(allPersons[i].totalCostRunning()) << '\n';
+			outfile << "Bill:	$" + std::to_string(allPersons[i].totalCostWeek()) << '\n';
 			total += allPersons[i].totalCostWeek();
 		}
 		outfile << "---------------------------------------------" << '\n';
-		outfile << "The total for this bill is: " + total; << '\n';
+		outfile << "The total for this bill is: " + std::to_string(total); << '\n';
 		sortBy(3);
 		outfile.close();
 		return 0;
@@ -334,21 +335,21 @@ int PersonDatabase::readDatabase(std::string path)
 		std::getline(inFile, tempInput);
 		std::getline(inFile, tempInput);
 		std::getline(inFile, tempInput);
-		tempBarCode =  std::stol(tempInput, sz);
+		tempBarCode =  std::stol(tempInput);
 		std::getline(inFile, tempName);
 		admin = new Person(tempName, tempBarCode, 0,0, true);
 		for(z = 0; inFile.good(); z++) {
 			std::getline(inFile, tempInput);
-			tempBarCode =  std::stol(tempInput, sz);
+			tempBarCode =  std::stol(tempInput);
 			std::getline(inFile, tempName);
 			std::getline(inFile, tempInput);
-			doubleCosts =  std::stod(tempInput, sz);
+			doubleCosts =  std::stod(tempInput);
 			tempTotalCostRunning = (long)(doubleCosts*100);
 			std::getline(inFile, tempInput);
-			doubleCosts =  std::stod(tempInput, sz);
+			doubleCosts =  std::stod(tempInput);
 			tempTotalCostWeek = (long)(doubleCosts*100);
 			std::getline(inFile, tempInput);
-			if(tempInput == '0' || tempInput == "true" || tempInput == "True" || tempInput == "TRUE") {
+			if(tempInput == "0" || tempInput == "true" || tempInput == "True" || tempInput == "TRUE") {
 				tempCanBuy = true;
 			}
 			else tempCanBuy = false;
@@ -386,22 +387,22 @@ int PersonDatabase::binarySearch(long extBarCode)
 	}
 	return -1;
 }
-PersonDatabase::addCost(int personNo, long cost) {
+void PersonDatabase::addCost(int personNo, long cost) {
 	allPersons[personNo].addPrice(cost);
 }
-PersonDatabase::resetBills() {
+void PersonDatabase::resetBills() {
 	for(int i = logicalSize -1; i > 0; i--) {
 		allPersons[i].resetWeekCost();
 	}
 }
-PersonDatabase::setAdminPassword(std::string extPassword) {
+void PersonDatabase::setAdminPassword(std::string extPassword) {
 	admin.setName(extPassword);
 }
 bool PersonDatabase::personCanBuy(int personNumber) 
 {
 	return allPersons[personNumber].canBuy();
 }
-PersonDatabase::setPersonCanBuy(int personNumber, bool canBuy) 
+void PersonDatabase::setPersonCanBuy(int personNumber, bool canBuy) 
 {
 	allPersons[personNumber].setCanBuy(canBuy);
 	writeOutDatabase("personDatabase.txt");
