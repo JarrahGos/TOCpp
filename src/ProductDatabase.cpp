@@ -6,12 +6,13 @@
  */
 
 #include <string>
+#include "Product.cpp"
 
 class ProductDatabase
 {
 private:
-	Product *admin = new Product;
-	std::vector<Product> allProducts(80);
+	Product admin;
+	std::vector<Product> allProducts;
 	int logicalSize;
 	int allProductsSize;
 public:
@@ -41,7 +42,7 @@ public:
 	void resetBills();
 	void resizeDatabase(bool);
 	Product* resizeDatabase(bool, Product*);
-	void setDatabaseProduct(int, std::string, long, long, long, bool);
+	int setDatabaseProduct(int, std::string, long, long);
 	setNumber(int, int);
 	void sortBy(int);
 	void writeOutDatabase(std::string);
@@ -52,11 +53,11 @@ ProductDatabase::ProductDatabase()
 	logicalSize = 0;
 	allProductsSize = 47;
 }
-void ProductDatabasesetDatabaseProduct(int productNo, std::string name, long running, long week, long barCode, bool canBuy)
+int ProductDatabase::setDatabaseProduct(int productNo, std::string name, long price, long barCode)
 {
 	int test = 1;
 	if(!productExists(name, barCode)) {
-		allProducts[logicalSize] = new Product(name, barCode, running, week, canBuy);
+		allProducts[logicalSize] = new Product(name, price, barCode);
 		logicalSize++;
 		test = 0;
 		ProductDatabase::writeOutDatabase("productDatabase.txt");
@@ -84,7 +85,7 @@ std::string ProductDatabase::getDatabase(int sort)
 std::string ProductDatabase::getProduct(int productNo)
 {
 	if(productNo < logicalSize) {
-		return allProducts[productNo]->getData();
+		return allProducts[productNo].getData();
 	}
 	else return "That product does not exist";
 }
@@ -110,10 +111,10 @@ int ProductDatabase::delProduct(int productNo)
 std::string ProductDatabase::getProductName(int productNo) 
 {
 	if(productNo == -2) {
-		return admin->getName();
+		return admin.getName();
 	}
 	else if(productNo < logicalSize) {
-		return allProducts[productNo]->getName();
+		return allProducts[productNo].getName();
 	}
 	else return "error";
 }
@@ -128,7 +129,7 @@ std::string* ProductDatabase::getUserNames() {
 long ProductDatabase::getBarCode(int productNo) 
 {
 	if(productNo < logicalSize){
-		return allProducts[productNo]->getBarCode();
+		return allProducts[productNo].getBarCode();
 	}
 	else return 0;
 }
@@ -139,7 +140,7 @@ int ProductDatabase::emptyProduct()
 bool ProductDatabase::productExists(std::string extProductName, long extBarCode) 
 {
 	for(int i = 0; i < logicalSize; i++){
-		if(allProducts[i] != '\0' && allProducts[i]->getName() == extProductName && allProducts[i]->getBarCode == extBarCode) {
+		if(allProducts[i] != '\0' && allProducts[i].getName() == extProductName && allProducts[i].getBarCode == extBarCode) {
 			return true;
 		}
 	}
@@ -151,7 +152,7 @@ bool ProductDatabase::productExists(long extBarCode)
 		return true;
 	}
 	for(int i =0; i  < logicalSize; i++) {
-		if(allProducts[i] != '\0' && allProducts[i]->getBarCode() == extBarCode && allProducts[i]->canBuy()) {
+		if(allProducts[i] != '\0' && allProducts[i].getBarCode() == extBarCode && allProducts[i].canBuy()) {
 			return true;
 		}
 	}
@@ -179,7 +180,7 @@ Product* ProductDatabase::resizeDatabase(bool action, std::vector<Product> resiz
 int ProductDatabase::partition(int lb, int ub, bool(*test)(Product*))
 {
 	Product pivotElement = allProducts[lb];
-	Product max = allProducts[logicalSize];
+	Product max = logicalSize;
 	int left = lb;
 	int right = ub;
 	Product temp;
@@ -313,17 +314,17 @@ int ProductDatabase::readDatabase(std::string path)
 		for(z = 0; inFile.good(); z++) {
 			std::getline(inFile, tempName);
 			std::getline(inFile, tempInput);
-			doubleCosts =  std::stod(tempInput, sz);
+			doubleCosts =  std::stod(tempInput);
 			tempPrice = (long)(doubleCosts*100);
 			std::getline(inFile, tempInput);
-			tempBarCode =  std::stol(tempInput, sz);
+			tempBarCode =  std::stol(tempInput);
 			
 			std::getline(inFile, tempInput);
 			if('-' == tempInput.at(0)) {
-				tempInput = tempInput.substr(1,tempInput.length(), sz);
+				tempInput = tempInput.substr(1,tempInput.length());
 				negative = true;
 			}
-			tempNumberOfProduct =  std::stoi(tempInput, sz);
+			tempNumberOfProduct =  std::stoi(tempInput);
 			if(negative) {
 				tempNumberOfProduct *= -1;
 			}

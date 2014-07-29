@@ -2,17 +2,26 @@
  * File:   CheckOut.cpp
  * Author: jarrah
  * 
+ * Created on 28 July 2014, 10:54 PM
+ */
+
+/* 
+ * File:   CheckOut.cpp
+ * Author: jarrah
+ * 
  * Created on 28 July 2014, 7:36 PM
  */
 
 #include <string>
 #include <vector>
+#include "Product.cpp"
 
-class CheckOut {
+class CheckOut 
+{
 private: 
 	int logicalSize;
-	std::vector<Product> products(4);
-	std::vector<int> quantities(4);
+	std::vector<Product> products;
+	std::vector<int> productQuantities;
 	long totalPrice;
 	int productsSize, quantitiesSize;
 public:
@@ -36,7 +45,7 @@ public:
 	Product* resizeCheckOut(bool, Product*);
 	int* resizeQuantities(bool, int*);
 	void sortBy(int);
-}
+};
 CheckOut::CheckOut()
 {
 	products = new Product[4];
