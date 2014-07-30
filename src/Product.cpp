@@ -13,6 +13,7 @@ private:
 	long barCode, productPriceVar;
 	int numberOfItems, quantity;
 public: 
+	Product();
 	Product(std::string, long, long);
 	void decrementNmuber();
 	long getBarCode();
