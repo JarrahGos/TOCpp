@@ -57,7 +57,6 @@ public:
 	void setPersonCanBuy(int, bool);
 	void sortBy(int);
 	int writeOutDatabase(std::string);
-	void writeOutDatabase(std::string);
 };
 PersonDatabase::PersonDatabase()
 {
