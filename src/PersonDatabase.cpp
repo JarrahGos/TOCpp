@@ -34,23 +34,39 @@ public:
 	double getPersonPriceYear(int);
 	std::string getPersonUser(int);
 	std::string* getUserNames();
+<<<<<<< HEAD
 	int partition(Person*, Person*, bool(PersonDatabase::*)(Person*, Person*, bool));
 	bool testName(Person*, Person*, bool);
 	bool testPrice(Person*, Person*, bool);
 	bool testBarCode(Person*, Person*, bool);
 	void quickSort(int, int, bool(PersonDatabase::*)(Person*, Person*, bool));
+=======
+	int partition(Person*, Person*, bool (*)(*));
+	bool testName(Person*, Person*, bool);
+	bool testPrice(Person*, Person*, bool);
+	bool testBarCode(Person*, Person*, bool);
+	void quickSort(int, int, bool (*test)(Person*));
+>>>>>>> e90bab75b2c1215403c585d5d4af4e642598b041
 	bool personCanBuy(int);
 	bool personExists(std::string, long);
 	bool personExists(long);
 	int readDatabase(std::string);
 	void resetBills();
 	void resizeDatabase(bool);
+<<<<<<< HEAD
 	std::vector<Person> resizeDatabase(bool, std::vector<Person>);
+=======
+	Person* resizeDatabase(bool, std::vector<Person>);
+>>>>>>> e90bab75b2c1215403c585d5d4af4e642598b041
 	void setAdminPassword(std::string);
 	int setDatabasePerson(int, std::string, long, long, long, bool);
 	void setPersonCanBuy(int, bool);
 	void sortBy(int);
+<<<<<<< HEAD
 	int writeOutDatabase(std::string);
+=======
+	void writeOutDatabase(std::string);
+>>>>>>> e90bab75b2c1215403c585d5d4af4e642598b041
 };
 PersonDatabase::PersonDatabase()
 {
