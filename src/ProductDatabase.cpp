@@ -178,7 +178,7 @@ std::vector<Product> ProductDatabase::resizeDatabase(bool action, std::vector<Pr
 		resizing.resize(allProductsSize);
 	}
 }
-int ProductDatabase::partition(int lb, int ub, bool(ProductDatabase::*)(Product*, Product*, bool))
+int ProductDatabase::partition(int lb, int ub, bool(ProductDatabase::*test)(Product*, Product*, bool))
 {
 	Product pivotElement = allProducts[lb];
 	int max = logicalSize;
@@ -205,7 +205,7 @@ int ProductDatabase::partition(int lb, int ub, bool(ProductDatabase::*)(Product*
 	allProducts[right] = pivotElement;
 	return right;
 }
-void ProductDatabase::quickSort(int left, int right, bool(ProductDatabase::*)(Product*, Product*, bool))
+void ProductDatabase::quickSort(int left, int right, bool(ProductDatabase::*test)(Product*, Product*, bool))
 {
 	if(left < right) {
 		int pivot = partition(left, right, test);

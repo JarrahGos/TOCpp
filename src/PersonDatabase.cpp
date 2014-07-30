@@ -39,6 +39,11 @@ public:
 	bool testPrice(Person*, Person*, bool);
 	bool testBarCode(Person*, Person*, bool);
 	void quickSort(int, int, bool(PersonDatabase::*)(Person*, Person*, bool));
+	int partition(Person*, Person*, bool (*)(*));
+	bool testName(Person*, Person*, bool);
+	bool testPrice(Person*, Person*, bool);
+	bool testBarCode(Person*, Person*, bool);
+	void quickSort(int, int, bool (*test)(Person*));
 	bool personCanBuy(int);
 	bool personExists(std::string, long);
 	bool personExists(long);
@@ -46,11 +51,13 @@ public:
 	void resetBills();
 	void resizeDatabase(bool);
 	std::vector<Person> resizeDatabase(bool, std::vector<Person>);
+	Person* resizeDatabase(bool, std::vector<Person>);
 	void setAdminPassword(std::string);
 	int setDatabasePerson(int, std::string, long, long, long, bool);
 	void setPersonCanBuy(int, bool);
 	void sortBy(int);
 	int writeOutDatabase(std::string);
+	void writeOutDatabase(std::string);
 };
 PersonDatabase::PersonDatabase()
 {
@@ -198,7 +205,7 @@ std::vector<Person> PersonDatabase::resizeDatabase(bool action, std::vector<Pers
 		resizing.resize(allPersonsSize);
 	}
 }
-int PersonDatabase::partition(int lb, int ub, bool(PersonDatabase::*)(Person*, Person*, bool))
+int PersonDatabase::partition(int lb, int ub, bool(PersonDatabase::*test)(Person*, Person*, bool))
 {
 	Person pivotElement = allPersons[lb];
 	Person max = allPersons[logicalSize];
@@ -225,7 +232,7 @@ int PersonDatabase::partition(int lb, int ub, bool(PersonDatabase::*)(Person*, P
 	allPersons[right] = pivotElement;
 	return right;
 }
-PersonDatabase::quickSort(int left, int right, bool(PersonDatabase::*)(Person*, Person*, bool))
+PersonDatabase::quickSort(int left, int right, bool(PersonDatabase::*test)(Person*, Person*, bool))
 {
 	if(left < right) {
 		int pivot = partition(left, right, test);

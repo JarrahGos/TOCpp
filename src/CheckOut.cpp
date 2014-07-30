@@ -195,7 +195,7 @@ int CheckOut::partition(int lb, int ub, bool(CheckOut::*test)(Product*, Product*
 	products[right] = pivotElement;
 	return right;
 }
-void CheckOut::quickSort(int left, int right, bool(CheckOut::*)(Product*, Product*, bool))
+void CheckOut::quickSort(int left, int right, bool(CheckOut::*test)(Product*, Product*, bool))
 {
 	if(left < right) {
 		int pivot = partition(left, right, test);
