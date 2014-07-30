@@ -30,6 +30,7 @@ public:
 	int addProduct(std::string, long, int);
 	void addQuantity(int, int);
 	void delProduct(int);
+	void destroy();
 	int emptyProduct();
 	std::string getCheckOut(int);
 	std::string* getCheckOutNames();
@@ -255,4 +256,9 @@ void CheckOut::addQuantity(int productNo, int add)
 {
 	products[productNo].setQuantity(products[productNo].getQuantity() + add);
 	totalPrice += products[productNo].productPrice();
+}
+void CheckOut::destroy()
+{
+	delete[] productQuantities;
+	delete[] products;
 }

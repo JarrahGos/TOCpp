@@ -14,7 +14,6 @@
 class ProductDatabase
 {
 private:
-	Product admin;
 	std::vector<Product> allProducts;
 	int logicalSize;
 	int allProductsSize;
@@ -23,6 +22,7 @@ public:
 	int adminWriteOutDatabase(std::string);
 	int binarySearch(long);
 	int delProduct(int);
+	void destroy();
 	int emptyProduct();
 	int findProduct(long);
 	long getBarCode(int);
@@ -45,7 +45,7 @@ public:
 	void resetBills();
 	void resizeDatabase(bool);
 	void resizeDatabase(bool, std::vector<Product>);
-	int setDatabaseProduct(int, std::string, long, long);
+	int setDatabaseProduct(std::string, long, long);
 	void setNumber(int, int);
 	void sortBy(int);
 	int writeOutDatabase(std::string);
@@ -56,8 +56,8 @@ ProductDatabase::ProductDatabase()
 	logicalSize = 0;
 	allProductsSize = 47;
 }
-int ProductDatabase::setDatabaseProduct(int productNo, std::string name, long price, long barCode)
-{
+int ProductDatabase::setDatabaseProduct(std::string name, long price, long barCode)
+{ // productNo is not used here. Why is it there?
 	int test = 1;
 	if(!productExists(name, barCode)) {
 		allProducts[logicalSize].setData(name, price, barCode);
@@ -329,7 +329,7 @@ int ProductDatabase::readDatabase(std::string path)
 			if(negative) {
 				tempNumberOfProduct *= -1;
 			}
-			count += ProductDatabase::setDatabaseProduct(z, tempName, tempPrice, tempBarCode);
+			count += ProductDatabase::setDatabaseProduct(tempName, tempPrice, tempBarCode);
 			allProducts[z].setNumber(tempNumberOfProduct);
 		}
 	}
@@ -363,4 +363,8 @@ int ProductDatabase::binarySearch(long extBarCode)
 		}
 	}
 	return -1;
+}
+void ProductDatabase::destroy()
+{
+	delete[] allProducts;
 }

@@ -24,6 +24,7 @@ public:
 	int adminWriteOutDatabase(std::string);
 	int binarySearch(long);
 	int delPerson(int);
+	void destroy();
 	int emptyPerson();
 	int findPerson(long);
 	long getBarCode(int);
@@ -412,4 +413,9 @@ void PersonDatabase::setPersonCanBuy(int personNumber, bool canBuy)
 {
 	allPersons[personNumber].setCanBuy(canBuy);
 	writeOutDatabase("personDatabase.txt");
+}
+void PersonDatabase::destroy()
+{
+	delete[] admin;
+	delete[] allPersons;
 }

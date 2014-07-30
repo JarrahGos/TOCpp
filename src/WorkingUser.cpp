@@ -8,9 +8,9 @@
 #include <openssl/sha.h>
 #include <cstring>
 #include <exception>
-#include "PersonDatabase.cpp"
-#incldue "ProductDatabase.cpp"
-#include "CheckOut.cpp"
+//#include "PersonDatabase.cpp"
+//#incldue "ProductDatabase.cpp"
+//#include "CheckOut.cpp"
 class WorkingUser {
 private:
 	//CheckOut checkOuts;
@@ -26,6 +26,7 @@ public:
 	bool addToCart(std::string);
 	void adminWriteOutDatabase(std::string);
 	void buyProducts();
+	void destroy();
 	std::string getCheckOut();
 	std::string* getCheckOutNames();
 	std::string* getCheckOutPrices();
@@ -81,7 +82,7 @@ void WorkingUser::getPMKeyS(std::string input)
 	bool correct = false;
 	bool broken = false;
 	int first;
-	if(!(input == '\0' || input == ""))  int first = input.at(0);
+	if(!(input == ""))  first = input.at(0);
 	else broken = true;
 	if((first > 65 && first < 90) || (first > 97 && first < 122)) {
 		input = input.substr(1, input.length(), std::string::size_type);
@@ -104,13 +105,14 @@ std::string* WorkingUser::getProductNames()
 }
 std::string WorkingUser::getSecurePassword(std::string passwordToHash)
 {
-	char* unHashed = new char[passwordToHash.length()+1];
-	for(int i = 0; i < passwordToHash.length(); i++) {
+	unsigned char* unHashed = new unsigned char[passwordToHash.length()+1];
+	for(unsigned int i = 0; i < passwordToHash.length(); i++) {
 		unHashed[i] = passwordToHash.at(i);
 	}
 	unHashed[passwordToHash.length()+1] = '\0';
-	char* hashed = new char[strlen(unHashed)];
-	SHA1(unHashed, std::strlen(unHashed), hashed);
+	const unsigned char* unHashed2 = unHashed;
+	unsigned char* hashed = new unsigned char[strlen((const char)unHashed)];
+	SHA1(unHashed2, std::strlen(unHashed), hashed);
 	std::string output(hashed);
 	return output;
 }
@@ -199,7 +201,7 @@ void WorkingUser::addPersonToDatabase(std::string name, long PMKeyS)
 }
 void WorkingUser::addProductToDatabase(std::string name, long barCode, long price)
 {
-	productDatabase.setDatabaseProduct(productDatabase.emptyProduct(), name, price, barCode);
+	productDatabase.setDatabaseProduct(name, price, barCode);
 }
 void WorkingUser::adminWriteOutDatabase(std::string type)
 {
@@ -241,4 +243,13 @@ bool WorkingUser::userCanBuy(int index)
 void WorkingUser::setUserCanBuy(int index, bool canBuy)
 {
 	personDatabase.setPersonCanBuy(index, canBuy);
+}
+void WorkingUser::destroy()
+{
+	personDatabase.destroy();
+	productDatabase.destroy();
+	checkOuts.destroy();
+	delete[] personDatabase;
+	delete[] productDatabase;
+	delete[] checkOuts;
 }
