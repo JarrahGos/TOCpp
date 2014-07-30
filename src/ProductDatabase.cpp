@@ -257,6 +257,7 @@ void ProductDatabase::sortBy(int sort) {
 }
 int ProductDatabase::writeOutDatabase(std::string path) 
 {
+	ProductDatabase::sortBy(1);
 	std::ofstream outfile (path);
 	if(outfile.is_open()) {
 		outfile << "ProductDatabase File" << '\n';
@@ -290,7 +291,7 @@ int ProductDatabase::adminWriteOutDatabase(std::string path)
 			outfile << "Bill:	$" + allProducts[i].getNumber() << '\n';
 		}
 		outfile << "---------------------------------------------" << '\n';
-		outfile << "The total for this bill is: " + total << '\n';
+		outfile << "The total for this billing cycle is: " + total << '\n';
 		sortBy(3);
 		outfile.close();
 		return 0;
