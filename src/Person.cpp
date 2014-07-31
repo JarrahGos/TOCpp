@@ -13,6 +13,7 @@ private:
 	long costRunning, costWeek, barCode;
 	bool userCanBuy;
 public: 
+	Person();
 	Person(std::string, long, long, long, bool);
 	void addPrice(long);
 	bool canBuy();
@@ -23,6 +24,7 @@ public:
 	void resetWeekCost();
 	void setCanBuy(bool);
 	void setData(std::string, long, bool);
+	void setData(std::string, long, long, long, bool);
 	void setName(std::string);
 	double totalCostRunning();
 	double totalCostWeek();
@@ -48,6 +50,14 @@ void Person::setData(std::string name, long extbarCode, bool extCanBuy)
 	Person::name = name;
 	Person::barCode = extbarCode;
 	Person::userCanBuy = extCanBuy;
+}
+void Person::setData(std::string name, long extbarCode, long running, long week, bool extCanBuy)
+{
+	Person::name = name;
+	Person::barCode = extbarCode;
+	Person::userCanBuy = extCanBuy;
+	Person::costRunning = running;
+	Person::costWeek = week;
 }
 std::string Person::getData()
 {

@@ -14,7 +14,7 @@
 
 #include <string>
 #include <vector>
-#include "Product.cpp"
+//#include "Product.cpp"
 
 class CheckOut 
 {
@@ -43,14 +43,12 @@ public:
 	void productBought();
 	int productEqualTo(long extBarCode);
 	void quickSort(int, int, bool(CheckOut::*)(Product*, Product*, bool));
-	std::vector<Product> resizeCheckOut(bool, std::vector<Product>);
-	std::vector<int> resizeQuantities(bool, std::vector<int>);
+	void resizeCheckOut(bool, std::vector<Product>);
+	void resizeQuantities(bool, std::vector<int>);
 	void sortBy(int);
 };
 CheckOut::CheckOut()
 {
-	products = new Product[4];
-	productQuantities = new int[4];
 	logicalSize = 0;
 	productsSize = 4;
 	totalPrice = 0;
@@ -59,8 +57,8 @@ CheckOut::CheckOut()
 int CheckOut::addProduct(Product item, int quantity)
 {
 	if(logicalSize == productsSize) {
-		products = resizeCheckOut(true, products);
-		productQuantities = resizeQuantities(true, productQuantities);
+		resizeCheckOut(true, products);
+		resizeQuantities(true, productQuantities);
 	}
 	item.setQuantity(quantity);
 	products[logicalSize] = item;
@@ -72,10 +70,10 @@ int CheckOut::addProduct(Product item, int quantity)
 int CheckOut::addProduct(std::string name, long price, int barCode)
 {
 	if(logicalSize == productsSize) {
-		products = resizeCheckOut(true, products);
-		productQuantities = resizeQuantities(true, productQuantities);
+		resizeCheckOut(true, products);
+		resizeQuantities(true, productQuantities);
 	}
-	products[logicalSize] = new Product (name, price, barCode);
+	products[logicalSize].setData(name, price, barCode);
 	totalPrice += price;
 	productQuantities[logicalSize] = 1;
 	logicalSize++;
@@ -123,7 +121,7 @@ void CheckOut::delProduct(int productNo)
 		logicalSize--;
 	}
 	if(logicalSize < productsSize/2) {
-		products = resizeCheckOut(false, products);
+		resizeCheckOut(false, products);
 	}
 }
 int CheckOut::emptyProduct()
@@ -133,36 +131,36 @@ int CheckOut::emptyProduct()
 int CheckOut::productEqualTo(long extBarCode)
 {
 	for (int i = 0; i < logicalSize; i++) {
-		if(products[i] != '\0' && products[i].getBarCode() == extBarCode) {
+		if(products[i].getBarCode() == extBarCode) {
 			return i;
 		}
 	}
 	return -1;
 }
-std::vector<Product> CheckOut::resizeCheckOut(bool action, std::vector<Product> resizing)
+void CheckOut::resizeCheckOut(bool action, std::vector<Product> resizing)
 {
 if(action) {
 		productsSize += 4;
-		return resizing.resize(productsSize);
+		resizing.resize(productsSize);
 	}
 	else if(productsSize/2 > 4) {
 		productsSize /=4;
-		return resizing.resize(productsSize);
+		resizing.resize(productsSize);
 	}
 	else {
 		productsSize = 4;
 		resizing.resize(productsSize);
 	}
 }
-std::vector<int> CheckOut::resizeQuantities(bool action, std::vector<int> resizing)
+void CheckOut::resizeQuantities(bool action, std::vector<int> resizing)
 {
 if(action) {
 		quantitiesSize += 4;
-		return resizing.resize(productsSize);
+		resizing.resize(productsSize);
 	}
 	else if(productsSize/2 > 4) {
 		productsSize /=4;
-		return resizing.resize(productsSize);
+		resizing.resize(productsSize);
 	}
 	else {
 		productsSize = 4;
@@ -178,10 +176,10 @@ int CheckOut::partition(int lb, int ub, bool(CheckOut::*test)(Product*, Product*
 	Product temp;
 	
 	while(left < right ){
-		while(test(&products[left], &pivotElement) && left + 1 < max) {
+		while((this->*test)(&products[left], &pivotElement, true) && left + 1 < max) {
 			left++;
 		}
-		while (test(&products[right], &pivotElement) && (right-1 > 0)) {
+		while ((this->*test)(&products[right], &pivotElement, false) && (right-1 > 0)) {
 			right--;
 		}
 		if(left < right) {
@@ -259,6 +257,6 @@ void CheckOut::addQuantity(int productNo, int add)
 }
 void CheckOut::destroy()
 {
-	delete[] productQuantities;
-	delete[] products;
+	delete[] &productQuantities;
+	delete[] &products;
 }

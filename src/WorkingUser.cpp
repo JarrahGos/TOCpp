@@ -8,12 +8,11 @@
 #include <openssl/sha.h>
 #include <cstring>
 #include <exception>
-//#include "PersonDatabase.cpp"
-//#incldue "ProductDatabase.cpp"
-//#include "CheckOut.cpp"
+#include "PersonDatabase.cpp"
+#include "ProductDatabase.cpp"
+#include "CheckOut.cpp"
 class WorkingUser {
 private:
-	//CheckOut checkOuts;
 	PersonDatabase personDatabase;
 	ProductDatabase productDatabase;
 	CheckOut checkOuts;
@@ -55,9 +54,9 @@ public:
 };
 WorkingUser::WorkingUser()
 {
-	WorkingUser::productDatabase = new ProductDatabase::ProductDatabase();
-	WorkingUser::personDatabase = new PersonDatabase();
-	WorkingUser::checkOuts = new CheckOut();
+//	productDatabase = new ProductDatabase();
+//	WorkingUser::personDatabase = new PersonDatabase();
+//	WorkingUser::checkOuts = new CheckOut();
 	WorkingUser::currentUserNumber = -1;
 }
 void WorkingUser::addDatabases()
@@ -85,14 +84,14 @@ void WorkingUser::getPMKeyS(std::string input)
 	if(!(input == ""))  first = input.at(0);
 	else broken = true;
 	if((first > 65 && first < 90) || (first > 97 && first < 122)) {
-		input = input.substr(1, input.length(), std::string::size_type);
+		input = input.substr(1, input.length());
 	}
-	if(broken || !WorkingUser::isLong(input) || !personDatabase.personExists(std::stol(input, std::string::size_type))) {
+	if(broken || !WorkingUser::isLong(input) || !personDatabase.personExists(std::stol(input))) {
 		currentUserNumber = -1;
 	} 
 	else {
 		correct = true;
-		currentUserNumber = personDatabase.findPerson(stol(input, std::string::size_type));
+		currentUserNumber = personDatabase.findPerson(std::stol(input));
 	}
 }
 std::string* WorkingUser::getUserNames() 
@@ -105,14 +104,12 @@ std::string* WorkingUser::getProductNames()
 }
 std::string WorkingUser::getSecurePassword(std::string passwordToHash)
 {
-	unsigned char* unHashed = new unsigned char[passwordToHash.length()+1];
-	for(unsigned int i = 0; i < passwordToHash.length(); i++) {
-		unHashed[i] = passwordToHash.at(i);
-	}
-	unHashed[passwordToHash.length()+1] = '\0';
-	const unsigned char* unHashed2 = unHashed;
-	unsigned char* hashed = new unsigned char[strlen((const char)unHashed)];
-	SHA1(unHashed2, std::strlen(unHashed), hashed);
+	const char* unHashed(passwordToHash.c_str());
+//	for(unsigned int i = 0; i < passwordToHash.length(); i++) {
+//		unHashed[i] = passwordToHash.at(i);
+//	}
+	unsigned char* hashed;
+	SHA1(unHashed, std::strlen(unHashed), hashed);
 	std::string output(hashed);
 	return output;
 }
@@ -127,33 +124,24 @@ void WorkingUser::setAdminPassword(std::string pw)
 }
 bool WorkingUser::isInteger(std::string s)
 {
-	try {
-		std::stoi(s);
+	if(s.find_first_not_of("0123456789") == std::string::npos) {
+		return true;
 	}
-	catch (exception& E) {
-		return false;
-	}
-	return true;
+	else return false;
 }
 bool WorkingUser::isLong(std::string s)
 {
-	try {
-		std::stol(s);
+	if(s.find_first_not_of("0123456789") == std::string::npos) {
+		return true;
 	}
-	catch (exception& E) {
-		return false;
-	}
-	return true;
+	else return false;
 }
 bool WorkingUser::isDouble(std::string s)
 {
-	try {
-		std::stod(s);
+	if(s.find_first_not_of("0123456789") == std::string::npos) {
+		return true;
 	}
-	catch (exception& E) {
-		return false;
-	}
-	return true;
+	else return false;
 }
 // scrollPane printDatabase goes here
 void WorkingUser::logOut()
@@ -249,7 +237,7 @@ void WorkingUser::destroy()
 	personDatabase.destroy();
 	productDatabase.destroy();
 	checkOuts.destroy();
-	delete[] personDatabase;
-	delete[] productDatabase;
-	delete[] checkOuts;
+	delete[] &personDatabase;
+	delete[] &productDatabase;
+	delete[] &checkOuts;
 }
