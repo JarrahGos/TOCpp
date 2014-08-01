@@ -35,5 +35,6 @@ The program will come with a bash script containing the code needed to export th
 
 Rewrite
 
-This program is a rewrite of TOC19, which was origionally written in java. This change has occured due to two factors. Performance and portability. The latter being due to the fact that the javafx implementation for the raspberry pi uses the framebuffer rather than X11. 
+This program is a rewrite of TOC19, which was origionally written in java. This change has occured due to two factors. Performance and portability. The latter being due to the fact that the javafx implementation for the raspberry pi uses the framebuffer rather than X11.
+The rewrite will be using QT5. Specifically, QT Quick and the QT Creator IDE. 
 The old project can be found at the following link: https://github.com/jarrah-95/TOC19
