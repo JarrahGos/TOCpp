@@ -111,10 +111,7 @@ int ProductDatabase::delProduct(int productNo)
 }
 std::string ProductDatabase::getProductName(int productNo) 
 {
-	if(productNo == -2) {
-		return admin.getName();
-	}
-	else if(productNo < logicalSize) {
+	if(productNo < logicalSize) {
 		return allProducts[productNo].getName();
 	}
 	else return "error";
@@ -261,9 +258,6 @@ int ProductDatabase::writeOutDatabase(std::string path)
 	std::ofstream outfile (path);
 	if(outfile.is_open()) {
 		outfile << "ProductDatabase File" << '\n';
-		outfile << "---------------------------------------------" << '\n';
-		outfile << "7000000" << '\n';
-		outfile << admin.getName() << '\n';
 		for(int i = 0; i < logicalSize; i++) {
 			outfile << "---------------------------------------------" << '\n';
 			outfile << allProducts[i].getName() << '\n';
@@ -366,5 +360,5 @@ int ProductDatabase::binarySearch(long extBarCode)
 }
 void ProductDatabase::destroy()
 {
-	delete[] allProducts;
+	delete[] &allProducts;
 }
