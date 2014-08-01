@@ -1,20 +1,12 @@
-/*
- * File:   Interface.cpp
- * Author: jarrah
- *
- * Created on 30 July 2014, 10:21 PM
- */
-
 #include <QApplication>
-#include <QWindow>
+#include <QQmlApplicationEngine>
 
-int main(int argc, char *argv[]) {
-	// initialize resources, if needed
-	// Q_INIT_RESOURCE(resfile);
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
 
-	QApplication app(argc, argv);
+    QQmlApplicationEngine engine;
+    engine.load(QUrl(QStringLiteral("qrc:///UserInterface.qml")));
 
-	// create and show your widgets here
-
-	return app.exec();
+    return app.exec();
 }
