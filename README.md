@@ -1,6 +1,11 @@
 TOCpp
 =====
 
+No longer maintained. 
+================
+This repo is no longer maintained and is unfinished. Feel free to repurpose to your own means. 
+All code is untested. 
+
 TOC Repositry for 19 Div
 
 Scope
